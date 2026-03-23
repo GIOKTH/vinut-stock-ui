@@ -68,6 +68,8 @@ export interface CreateSaleSchema {
     items: CreateSaleItemSchema[];
     payment_method?: string | null;
     promotion_code?: string | null;
+    payment_amount?: number | null;
+    payment_currency?: string | null;
     status?: string | null;
 }
 
@@ -158,15 +160,25 @@ export interface Sale {
     status?: string | null;
     total_amount: string;
     user_id?: string | null;
+    payment_amount?: string | null;
+    payment_currency?: string | null;
+    username?: string | null;
 }
 
-export interface SaleItem {
+export interface SaleItemResponse {
     id: string;
-    product_id?: string | null;
-    quantity: number;
     sale_id: string;
+    product_id?: string | null;
+    product_name?: string | null;
+    product_code?: string | null;
+    quantity: number;
     subtotal: string;
     unit_price: string;
+}
+
+export interface SaleDetailResponse {
+    items: SaleItemResponse[];
+    sale: Sale;
 }
 
 export interface UpdateExchangeRateSchema {

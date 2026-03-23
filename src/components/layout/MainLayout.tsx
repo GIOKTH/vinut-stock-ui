@@ -18,7 +18,7 @@ export default function MainLayout() {
     const title = getTitle(location.pathname);
 
     return (
-        <div className="flex h-screen bg-gray-950 text-white overflow-hidden w-full">
+        <div className="flex h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-white transition-colors duration-300 overflow-hidden w-full">
             <Sidebar isOpen={false} onClose={() => {}} />
             
             <div className="flex-1 flex flex-col min-w-0 overflow-hidden w-full pb-16 lg:pb-0">

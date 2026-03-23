@@ -16,4 +16,9 @@ export const saleService = {
         const response = await api.patch<Sale>(`/sales/${id}/status`, data);
         return response.data;
     },
+
+    getSaleDetail: async (id: string): Promise<any> => {
+        const response = await api.get<any>(`/sales/${id}`);
+        return response.data;
+    },
 };

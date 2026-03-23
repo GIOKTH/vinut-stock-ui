@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '../../services/auth';
-import { User, Lock } from 'lucide-react';
+import { User, Lock, XCircle } from 'lucide-react';
 
 export default function Login() {
     const [username, setUsername] = useState('');
@@ -28,49 +28,53 @@ export default function Login() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-950 flex items-center justify-center px-4">
-            <div className="max-w-md w-full bg-gray-900 rounded-xl border border-gray-800 p-8 shadow-2xl">
-                <div className="text-center mb-8">
-                    <h2 className="text-3xl font-bold text-white">Welcome Back</h2>
-                    <p className="text-gray-400 mt-2">Sign in to your account to continue</p>
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center px-4 transition-colors duration-500">
+            <div className="max-w-md w-full bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-8 shadow-2xl transition-all duration-300">
+                <div className="text-center mb-10">
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-2xl mb-6 shadow-lg shadow-blue-500/30 rotate-3 hover:rotate-0 transition-transform duration-300">
+                        <Lock className="w-8 h-8 text-white" />
+                    </div>
+                    <h2 className="text-3xl font-black text-gray-900 dark:text-white uppercase tracking-widest">Antigravity POS</h2>
+                    <p className="text-gray-500 dark:text-gray-400 mt-2 font-medium">Access your enterprise dashboard</p>
                 </div>
 
                 {error && (
-                    <div className="bg-red-900/50 border border-red-900 text-red-200 px-4 py-3 rounded-lg mb-6 text-sm">
+                    <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-300 px-4 py-3 rounded-xl mb-8 text-sm font-bold flex items-center gap-3 animate-shake">
+                        <XCircle className="w-4 h-4" />
                         {error}
                     </div>
                 )}
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div>
-                        <label className="block text-sm font-medium text-gray-400 mb-2">Username</label>
-                        <div className="relative">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <User className="h-5 w-5 text-gray-500" />
+                        <label className="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2 ml-1">Username</label>
+                        <div className="relative group">
+                            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <User className="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
                             </div>
                             <input
                                 type="text"
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
                                 required
-                                className="block w-full pl-10 bg-gray-800 border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2.5"
-                                placeholder="Enter your username"
+                                className="block w-full pl-12 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-600 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 sm:text-sm p-3.5 transition-all outline-none"
+                                placeholder="Enter your identifier"
                             />
                         </div>
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-400 mb-2">Password</label>
-                        <div className="relative">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <Lock className="h-5 w-5 text-gray-500" />
+                        <label className="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2 ml-1">Password</label>
+                        <div className="relative group">
+                            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <Lock className="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
                             </div>
                             <input
                                 type="password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
-                                className="block w-full pl-10 bg-gray-800 border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2.5"
+                                className="block w-full pl-12 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-600 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 sm:text-sm p-3.5 transition-all outline-none"
                                 placeholder="••••••••"
                             />
                         </div>
@@ -79,9 +83,9 @@ export default function Login() {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        className="w-full flex justify-center py-4 px-4 rounded-2xl shadow-2xl text-sm font-black text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 transition-all duration-300 shadow-blue-500/30 active:scale-[0.98] uppercase tracking-[0.2em] border border-blue-500/20"
                     >
-                        {loading ? 'Signing in...' : 'Sign In'}
+                        {loading ? 'Authenticating...' : 'Sign In Now'}
                     </button>
                 </form>
             </div>

@@ -29,15 +29,15 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
 
     return (
         <div 
-            className={`fixed inset-y-0 left-0 z-30 w-64 bg-gray-900 border-r border-gray-800 flex flex-col transform transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 ${
+            className={`fixed inset-y-0 left-0 z-30 w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 flex flex-col transform transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 ${
                 isOpen ? 'translate-x-0' : '-translate-x-full'
             }`}
         >
-            <div className="flex items-center justify-between h-16 px-4 border-b border-gray-800">
-                <span className="text-xl font-bold text-white">MaoGao Stocks</span>
+            <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200 dark:border-gray-800">
+                <span className="text-xl font-bold text-gray-900 dark:text-white uppercase tracking-tight">MaoGao Stocks</span>
                 <button 
                     onClick={onClose}
-                    className="p-2 -mr-2 text-gray-400 hover:text-white lg:hidden"
+                    className="p-2 -mr-2 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white lg:hidden"
                 >
                     <X className="w-5 h-5" />
                 </button>
@@ -50,13 +50,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                             key={item.name}
                             to={item.href}
                             onClick={onClose}
-                            className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors ${isActive
-                                    ? 'bg-gray-800 text-white'
-                                    : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+                            className={`group flex items-center px-4 py-3 text-sm font-bold rounded-xl transition-all active:scale-95 ${isActive
+                                    ? 'bg-blue-600/10 text-blue-600 dark:bg-blue-600/15 dark:text-blue-400 shadow-sm border border-blue-500/10'
+                                    : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/80 hover:text-gray-900 dark:hover:text-white border border-transparent hover:border-gray-200 dark:hover:border-gray-700'
                                 }`}
                         >
                             <item.icon
-                                className={`mr-3 h-5 w-5 flex-shrink-0 ${isActive ? 'text-white' : 'text-gray-400 group-hover:text-white'
+                                className={`mr-3 h-5 w-5 flex-shrink-0 transition-colors ${isActive ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400'
                                     }`}
                                 aria-hidden="true"
                             />
@@ -65,13 +65,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                     );
                 })}
             </nav>
-            <div className="p-4 border-t border-gray-800 mt-auto shrink-0">
+            <div className="p-4 border-t border-gray-200 dark:border-gray-800 mt-auto shrink-0">
                 <button
                     onClick={handleLogout}
-                    className="flex w-full items-center px-4 py-2 text-sm font-medium rounded-lg text-red-400/90 hover:bg-red-500/10 hover:text-red-400 transition-colors border border-transparent hover:border-red-500/20"
+                    className="flex w-full items-center px-4 py-3 text-sm font-black rounded-xl text-red-500/90 bg-red-500/5 hover:bg-red-500/10 hover:text-red-500 transition-all border border-red-500/10 hover:border-red-500/30 active:scale-95 shadow-sm uppercase tracking-widest text-[11px]"
                 >
                     <LogOut className="mr-3 h-5 w-5 flex-shrink-0" aria-hidden="true" />
-                    Logout
+                    Logout Account
                 </button>
             </div>
         </div>
