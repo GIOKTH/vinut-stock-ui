@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { UserResponse } from '../../types/api';
 import { settingsService } from '../../services/settings';
-import { Users, Shield, ShieldOff, Trash2, UserCog, CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
+import { Users, Shield, ShieldOff, Trash2 } from 'lucide-react';
 
 interface UserManagementProps {
     showNotification: (type: 'success' | 'error' | 'warning', message: string) => void;
@@ -126,9 +126,8 @@ export default function UserManagement({ showNotification }: UserManagementProps
                                         disabled={actionLoading === user.id}
                                         className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-2 py-1 text-xs font-bold text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     >
-                                        <option value="USER">USER</option>
-                                        <option value="SALES">SALES</option>
-                                        <option value="MANAGER">MANAGER</option>
+                                        <option value="ADMIN">ADMIN</option>
+                                        <option value="SALE">SALE</option>
                                     </select>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">

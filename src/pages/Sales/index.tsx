@@ -238,12 +238,23 @@ const Sales: React.FC = () => {
         const product = products.find(p => p.code.toLowerCase() === code.toLowerCase());
         if (product) {
             const existingItemIndex = saleForm.items.findIndex(item => item.product_id === product.id);
+            const currentQty = existingItemIndex > -1 ? saleForm.items[existingItemIndex].quantity : 0;
+            
+            if (product.quantity <= 0) {
+                showNotification('error', `Product "${product.name}" is out of stock!`);
+                setScanInput('');
+                return;
+            }
+
+            if (currentQty + 1 > product.quantity) {
+                showNotification('warning', `Only ${product.quantity} items available in stock.`);
+                setScanInput('');
+                return;
+            }
+
             if (existingItemIndex > -1) {
                 const newItems = [...saleForm.items];
                 newItems[existingItemIndex].quantity += 1;
-                // Move existing item to top if scanned again? 
-                // Let's keep it in place for now but if they want "latest on top", 
-                // we could also move it. For now, just follow the "new item on top" rule.
                 setSaleForm({ ...saleForm, items: newItems });
             } else {
                 if (saleForm.items.length === 1 && !saleForm.items[0].product_id) {
@@ -285,6 +296,22 @@ const Sales: React.FC = () => {
     };
 
     const updateSaleItem = (index: number, field: string, value: any) => {
+        const product = products.find(p => p.id === (field === 'product_id' ? value : saleForm.items[index].product_id));
+        
+        if (field === 'product_id' && value && product) {
+            if (product.quantity <= 0) {
+                showNotification('error', `Cannot add "${product.name}" - Out of stock!`);
+                return; // Don't update
+            }
+        }
+
+        if (field === 'quantity' && product) {
+            if (value > product.quantity) {
+                showNotification('warning', `Maximum stock reached: only ${product.quantity} available.`);
+                value = product.quantity;
+            }
+        }
+
         const newItems = [...saleForm.items];
         newItems[index] = { ...newItems[index], [field]: value };
         setSaleForm({ ...saleForm, items: newItems });
@@ -406,8 +433,13 @@ const Sales: React.FC = () => {
                                             >
                                                 <option value="" className="bg-white dark:bg-gray-900 text-gray-400">Select product...</option>
                                                 {products.map(p => (
-                                                    <option key={p.id} value={p.id} className="bg-white dark:bg-gray-900">
-                                                        {p.name} (${p.sale_price})
+                                                    <option 
+                                                        key={p.id} 
+                                                        value={p.id} 
+                                                        className={`bg-white dark:bg-gray-900 ${p.quantity <= 0 ? 'text-gray-400 opacity-50' : ''}`}
+                                                        disabled={p.quantity <= 0}
+                                                    >
+                                                        {p.name} ({p.quantity <= 0 ? 'OUT OF STOCK' : `Stock: ${p.quantity}`}) - ${p.sale_price}
                                                     </option>
                                                 ))}
                                             </select>
