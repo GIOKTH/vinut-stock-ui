@@ -159,7 +159,7 @@ export default function Dashboard() {
                                 KRW: 'cyan',
                             };
                             const color = colors[rate.currency] || 'blue';
-                            
+
                             return (
                                 <div
                                     key={rate.currency}
@@ -169,30 +169,25 @@ export default function Dashboard() {
                                     <div className={`absolute -top-12 -right-12 w-24 h-24 bg-${color}-500/5 dark:bg-${color}-500/10 rounded-full blur-2xl group-hover:bg-${color}-500/20 transition-all duration-500`}></div>
 
                                     <div className="relative flex flex-col items-center justify-center space-y-4">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-12 h-12 bg-blue-500/10 dark:bg-blue-600/20 rounded-full flex items-center justify-center text-xs font-black text-blue-600 dark:text-blue-400 border border-blue-500/20 dark:border-blue-500/30 shadow-sm uppercase shrink-0">
-                                            USD
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-12 h-12 bg-blue-500/10 dark:bg-blue-600/20 rounded-full flex items-center justify-center text-xs font-black text-blue-600 dark:text-blue-400 border border-blue-500/20 dark:border-blue-500/30 shadow-sm uppercase shrink-0">
+                                                USD
+                                            </div>
+                                            <ArrowRight className="w-4 h-4 text-gray-400" />
+                                            <div className="w-12 h-12 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center text-xs font-black text-gray-900 dark:text-white border border-gray-200/50 dark:border-gray-700 shadow-sm uppercase shrink-0">
+                                                {rate.currency}
+                                            </div>
                                         </div>
-                                        <ArrowRight className="w-4 h-4 text-gray-400" />
-                                        <div className="w-12 h-12 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center text-xs font-black text-gray-900 dark:text-white border border-gray-200/50 dark:border-gray-700 shadow-sm uppercase shrink-0">
-                                            {rate.currency}
-                                        </div>
-                                    </div>
 
-                                    <div className="text-center group-hover:scale-110 transition-transform duration-300">
-                                        <div className="text-2xl font-black text-gray-900 dark:text-white tracking-tighter tabular-nums drop-shadow-sm group-hover:text-blue-500 transition-colors">
-                                            {Number(rate.rate).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 4 })}
+                                        <div className="text-center group-hover:scale-110 transition-transform duration-300">
+                                            <div className="text-2xl font-black text-gray-900 dark:text-white tracking-tighter tabular-nums drop-shadow-sm group-hover:text-blue-500 transition-colors">
+                                                {Number(rate.rate).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 4 })}
+                                            </div>
                                         </div>
-                                    </div>
-
-                                    <div className="flex items-center gap-1.5 px-3 py-1 bg-gray-50 dark:bg-gray-800/80 rounded-full border border-gray-100 dark:border-gray-700/50">
-                                        <TrendingUp className="w-3 h-3 text-emerald-500" />
-                                        <span className="text-[9px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest whitespace-nowrap">Live Rate</span>
                                     </div>
                                 </div>
-                            </div>
-                        );
-                    })}
+                            );
+                        })}
                     </div>
                 </div>
             </div>
@@ -264,7 +259,7 @@ export default function Dashboard() {
 
             {/* Low Stock Table */}
             <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm transition-all duration-300">
-                <button 
+                <button
                     onClick={() => setIsLowStockExpanded(!isLowStockExpanded)}
                     className="w-full p-4 sm:p-6 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between hover:bg-gray-50/50 dark:hover:bg-gray-900/40 transition-colors group"
                 >
@@ -281,42 +276,42 @@ export default function Dashboard() {
                     </div>
                     {isLowStockExpanded ? <ChevronUp className="w-5 h-5 text-gray-400 group-hover:text-blue-500 transition-colors" /> : <ChevronDown className="w-5 h-5 text-gray-400 group-hover:text-blue-500 transition-colors" />}
                 </button>
-                
+
                 {isLowStockExpanded && (
                     <div className="overflow-x-auto transition-all animate-in fade-in slide-in-from-top-2 duration-300">
                         <table className="w-full text-left min-w-[600px] sm:min-w-full">
                             <thead className="bg-gray-50 dark:bg-gray-900/50">
-                            <tr>
-                                <th className="px-4 sm:px-6 py-4 text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest italic">Product Name</th>
-                                <th className="px-4 sm:px-6 py-4 text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest italic">Current</th>
-                                <th className="px-4 sm:px-6 py-4 text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest italic">Threshold</th>
-                                <th className="px-4 sm:px-6 py-4 text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest italic">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
-                            {summary.low_stock_details.length > 0 ? (
-                                summary.low_stock_details.map((item, index) => (
-                                    <tr key={index} className="hover:bg-gray-50 dark:hover:bg-gray-750/50 transition-colors">
-                                        <td className="px-4 sm:px-6 py-4 text-sm font-bold text-gray-700 dark:text-gray-300">{item.name}</td>
-                                        <td className="px-4 sm:px-6 py-4 text-sm text-red-600 dark:text-red-400 font-black">{item.quantity}</td>
-                                        <td className="px-4 sm:px-6 py-4 text-sm text-gray-400 dark:text-gray-500 font-medium">{item.threshold}</td>
-                                        <td className="px-4 sm:px-6 py-4">
-                                            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-500 border border-red-200 dark:border-red-800">
-                                                Low Stock
-                                            </span>
+                                <tr>
+                                    <th className="px-4 sm:px-6 py-4 text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest italic">Product Name</th>
+                                    <th className="px-4 sm:px-6 py-4 text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest italic">Current</th>
+                                    <th className="px-4 sm:px-6 py-4 text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest italic">Threshold</th>
+                                    <th className="px-4 sm:px-6 py-4 text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest italic">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+                                {summary.low_stock_details.length > 0 ? (
+                                    summary.low_stock_details.map((item, index) => (
+                                        <tr key={index} className="hover:bg-gray-50 dark:hover:bg-gray-750/50 transition-colors">
+                                            <td className="px-4 sm:px-6 py-4 text-sm font-bold text-gray-700 dark:text-gray-300">{item.name}</td>
+                                            <td className="px-4 sm:px-6 py-4 text-sm text-red-600 dark:text-red-400 font-black">{item.quantity}</td>
+                                            <td className="px-4 sm:px-6 py-4 text-sm text-gray-400 dark:text-gray-500 font-medium">{item.threshold}</td>
+                                            <td className="px-4 sm:px-6 py-4">
+                                                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-500 border border-red-200 dark:border-red-800">
+                                                    Low Stock
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan={4} className="px-6 py-8 text-center text-gray-500">
+                                            No low stock items found.
                                         </td>
                                     </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan={4} className="px-6 py-8 text-center text-gray-500">
-                                        No low stock items found.
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                </div>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
                 )}
             </div>
         </div>

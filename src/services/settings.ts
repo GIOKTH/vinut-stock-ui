@@ -1,4 +1,4 @@
-import api from '../lib/axios';
+import { apiInstance as api } from '../lib/axios';
 import { ExchangeRate, UpdateExchangeRateSchema, UserResponse, ChangeRoleSchema } from '../types/api';
 
 export const settingsService = {

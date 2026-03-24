@@ -1,12 +1,12 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Package, ShoppingCart, BarChart3, Settings } from 'lucide-react';
+import { LayoutDashboard, Package, ShoppingCart, ShoppingBag, Settings } from 'lucide-react';
 
 const navigation = [
     { name: 'Dashboard', href: '/', icon: LayoutDashboard },
     { name: 'Products', href: '/products', icon: Package },
     { name: 'Sales', href: '/sales', icon: ShoppingCart },
-    { name: 'Reports', href: '/reports', icon: BarChart3 },
+    { name: 'Buy', href: '/purchases', icon: ShoppingBag },
     { name: 'Settings', href: '/settings', icon: Settings },
 ];
 

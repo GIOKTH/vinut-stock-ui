@@ -1,12 +1,13 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Package, ShoppingCart, FileText, BarChart3, Settings, LogOut } from 'lucide-react';
+import { LayoutDashboard, Package, ShoppingCart, ShoppingBag, FileText, BarChart3, Settings, LogOut } from 'lucide-react';
 import { authService } from '../../services/auth';
 
 const navigation = [
     { name: 'Dashboard', href: '/', icon: LayoutDashboard },
     { name: 'Products', href: '/products', icon: Package },
     { name: 'Sales', href: '/sales', icon: ShoppingCart },
+    { name: 'Purchases', href: '/purchases', icon: ShoppingBag },
     { name: 'Quotations', href: '/quotations', icon: FileText },
     { name: 'Reports', href: '/reports', icon: BarChart3 },
     { name: 'Settings', href: '/settings', icon: Settings },

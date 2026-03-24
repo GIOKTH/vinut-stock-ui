@@ -7,6 +7,7 @@ const getTitle = (pathname: string) => {
     if (pathname === '/') return 'Dashboard';
     if (pathname.startsWith('/products')) return 'Products';
     if (pathname.startsWith('/sales')) return 'Sales';
+    if (pathname.startsWith('/purchases')) return 'Purchases';
     if (pathname.startsWith('/quotations')) return 'Quotations';
     if (pathname.startsWith('/reports')) return 'Reports';
     if (pathname.startsWith('/settings')) return 'Settings';

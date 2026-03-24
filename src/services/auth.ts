@@ -1,4 +1,4 @@
-import api from '../lib/axios';
+import { apiInstance as api } from '../lib/axios';
 import { LoginSchema, CreateUserSchema, UserResponse } from '../types/api';
 
 export const authService = {
