@@ -19,11 +19,11 @@ export default function MainLayout() {
 
     return (
         <div className="flex h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-white transition-colors duration-300 overflow-hidden w-full">
-            <Sidebar isOpen={false} onClose={() => {}} />
-            
-            <div className="flex-1 flex flex-col min-w-0 overflow-hidden w-full pb-16 lg:pb-0">
+            <Sidebar />
+
+            <div className="flex-1 flex flex-col min-w-0 overflow-hidden w-full pb-20 lg:pb-0">
                 <Header title={title} />
-                <main className="flex-1 overflow-y-auto p-4 sm:p-6 w-full pb-20 sm:pb-6">
+                <main className="flex-1 overflow-y-auto p-4 sm:p-6 w-full pb-24 sm:pb-6">
                     <div className="max-w-7xl mx-auto w-full">
                         <Outlet />
                     </div>

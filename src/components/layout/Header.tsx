@@ -30,7 +30,7 @@ export default function Header({ title }: HeaderProps) {
 
     return (
         <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 h-16 flex items-center justify-between px-4 sm:px-6 shrink-0 transition-colors duration-300">
-            <div className="flex items-center">
+            <div className="flex items-center gap-3">
                 <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white uppercase tracking-tight">{title}</h2>
             </div>
             <div className="flex items-center space-x-2 sm:space-x-4">

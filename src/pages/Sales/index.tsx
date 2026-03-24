@@ -19,7 +19,6 @@ import {
     X,
     Printer,
     Download,
-    Banknote,
     Barcode,
     TableProperties as TablePropertiesIcon
 } from 'lucide-react';
@@ -27,6 +26,22 @@ import { saleService } from '../../services/sales';
 import { productService } from '../../services/products';
 import { settingsService } from '../../services/settings';
 import { Sale, Product, ExchangeRate, SaleDetailResponse } from '../../types/api';
+
+const renderPrice = (amount: number | string | null | undefined, symbol: string = '', currency: string | null | undefined = '') => {
+    const formatted = typeof amount === 'number' 
+        ? amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+        : parseFloat(amount || '0').toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    
+    const [int, dec] = formatted.split('.');
+    return (
+        <span className="inline-flex items-baseline">
+            {symbol && <span>{symbol}</span>}
+            <span>{int}</span>
+            <span className="text-[0.75em] opacity-80">.{dec}</span>
+            {currency && <span className="ml-1">{currency}</span>}
+        </span>
+    );
+};
 
 const Sales: React.FC = () => {
     const [activeTab, setActiveTab] = useState<'POS' | 'HISTORY'>('POS');
@@ -300,40 +315,45 @@ const Sales: React.FC = () => {
 
     return (
         <div className="space-y-6">
-            {/* Header section with Tabs */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-gray-200 dark:border-gray-800 pb-1 px-1 transition-colors duration-300">
-                <div className="flex-1 w-full">
-                    <h1 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2 mb-4 tracking-tight uppercase">
-                        <ShoppingBag className="w-6 h-6 md:w-7 md:h-7 text-blue-500" />
-                        Sales
-                    </h1>
-
-                    <div className="flex items-center gap-1 overflow-x-auto no-scrollbar">
-                        <button
-                            onClick={() => setActiveTab('POS')}
-                            className={`flex items-center gap-2 px-4 md:px-6 py-2.5 rounded-t-xl transition-all font-bold text-xs md:text-sm border-b-2 whitespace-nowrap ${activeTab === 'POS'
-                                ? 'bg-blue-500/10 text-blue-600 dark:bg-blue-600/10 dark:text-blue-400 border-blue-500'
-                                : 'text-gray-500 hover:text-gray-900 dark:hover:text-gray-300 border-transparent'
-                                }`}
-                        >
-                            <ShoppingCart className="w-4 h-4" />
-                            POS
-                            <span className="ml-2 px-1 py-0.5 text-[8px] bg-gray-100 dark:bg-gray-800 text-gray-400 rounded border border-gray-200 dark:border-gray-700 font-black">ALT+1</span>
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('HISTORY')}
-                            className={`flex items-center gap-2 px-4 md:px-6 py-2.5 rounded-t-xl transition-all font-bold text-xs md:text-sm border-b-2 whitespace-nowrap ${activeTab === 'HISTORY'
-                                ? 'bg-blue-500/10 text-blue-600 dark:bg-blue-600/10 dark:text-blue-400 border-blue-500'
-                                : 'text-gray-500 hover:text-gray-900 dark:hover:text-gray-300 border-transparent'
-                                }`}
-                        >
-                            <History className="w-4 h-4" />
-                            History
-                            <span className="ml-2 px-1 py-0.5 text-[8px] bg-gray-100 dark:bg-gray-800 text-gray-400 rounded border border-gray-200 dark:border-gray-700 font-black">ALT+2</span>
-                        </button>
-                    </div>
-                </div>
+            {/* Header */}
+            <div>
+                <h1 className="text-2xl font-black text-gray-900 dark:text-white uppercase tracking-tight flex items-center gap-2">
+                    <ShoppingBag className="w-6 h-6 text-blue-500" />
+                    Sales
+                </h1>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Point of sale and transaction history</p>
             </div>
+
+            {/* Tab Bar — matches Settings style */}
+            <div className="flex gap-1 p-1 bg-gray-100 dark:bg-gray-800/80 rounded-xl border border-gray-200 dark:border-gray-700 overflow-x-auto scrollbar-none">
+                <button
+                    onClick={() => setActiveTab('POS')}
+                    className={`relative flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-bold transition-all whitespace-nowrap flex-1 justify-center
+                        ${activeTab === 'POS'
+                            ? 'bg-white dark:bg-gray-900 text-blue-600 dark:text-blue-400 shadow-sm border border-gray-200 dark:border-gray-700'
+                            : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
+                        }`}
+                >
+                    <ShoppingCart className={`w-4 h-4 ${activeTab === 'POS' ? 'text-blue-600 dark:text-blue-400' : ''}`} />
+                    <span className="hidden sm:inline">POS</span>
+                    <span className="sm:hidden">POS</span>
+                    <span className="ml-1 px-1.5 py-0.5 text-[8px] bg-gray-100 dark:bg-gray-800 text-gray-400 rounded border border-gray-200 dark:border-gray-700 font-black hidden sm:inline">ALT+1</span>
+                </button>
+                <button
+                    onClick={() => setActiveTab('HISTORY')}
+                    className={`relative flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-bold transition-all whitespace-nowrap flex-1 justify-center
+                        ${activeTab === 'HISTORY'
+                            ? 'bg-white dark:bg-gray-900 text-blue-600 dark:text-blue-400 shadow-sm border border-gray-200 dark:border-gray-700'
+                            : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
+                        }`}
+                >
+                    <History className={`w-4 h-4 ${activeTab === 'HISTORY' ? 'text-blue-600 dark:text-blue-400' : ''}`} />
+                    <span className="hidden sm:inline">History</span>
+                    <span className="sm:hidden">History</span>
+                    <span className="ml-1 px-1.5 py-0.5 text-[8px] bg-gray-100 dark:bg-gray-800 text-gray-400 rounded border border-gray-200 dark:border-gray-700 font-black hidden sm:inline">ALT+2</span>
+                </button>
+            </div>
+
 
             {/* Notification */}
             {notification && (
@@ -405,7 +425,7 @@ const Sales: React.FC = () => {
                                             </div>
                                             <div className="w-24 md:w-32 text-right">
                                                 <p className="text-gray-900 dark:text-white font-black">
-                                                    ${((products.find(p => p.id === item.product_id)?.sale_price || 0) as number * item.quantity).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                                                    {renderPrice(((products.find(p => p.id === item.product_id)?.sale_price || 0) as number * item.quantity), '$')}
                                                 </p>
                                             </div>
                                             <button
@@ -490,7 +510,7 @@ const Sales: React.FC = () => {
                                 <div className="hidden xl:block pt-6 border-t border-gray-100 dark:border-gray-700 space-y-3 transition-colors duration-300">
                                     <div className="flex justify-between items-center text-gray-500 dark:text-gray-400 font-bold uppercase tracking-widest text-[10px]">
                                         <span className="text-sm font-medium">Total Price (USD)</span>
-                                        <p className="text-sm font-black text-gray-900 dark:text-white">${estimatedTotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+                                        <p className="text-sm font-black text-gray-900 dark:text-white">{renderPrice(estimatedTotal, '$')}</p>
                                     </div>
 
                                     {saleForm.currency_code !== 'BASE' && (
@@ -503,7 +523,7 @@ const Sales: React.FC = () => {
                                     <div className="flex justify-between items-center text-gray-400 dark:text-gray-500 py-3 border-t border-gray-50 dark:border-gray-800/50">
                                         <span className="text-sm font-medium italic">Subtotal ({saleForm.payment_currency === 'BASE' ? 'USD' : saleForm.payment_currency})</span>
                                         <span className="text-xl font-black text-blue-600 dark:text-blue-500">
-                                            {parseFloat(saleForm.payment_amount || '0').toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {saleForm.payment_currency === 'BASE' ? 'USD' : saleForm.payment_currency}
+                                            {renderPrice(saleForm.payment_amount || '0', '', saleForm.payment_currency === 'BASE' ? 'USD' : saleForm.payment_currency)}
                                         </span>
                                     </div>
 
@@ -516,7 +536,7 @@ const Sales: React.FC = () => {
                                         </div>
                                         <div className="text-right">
                                             <p className="text-xl font-black text-blue-600 dark:text-blue-500 leading-none">
-                                                {parseFloat(saleForm.payment_amount || '0').toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {saleForm.payment_currency === 'BASE' ? 'USD' : saleForm.payment_currency}
+                                                {renderPrice(saleForm.payment_amount || '0', '', saleForm.payment_currency === 'BASE' ? 'USD' : saleForm.payment_currency)}
                                             </p>
                                         </div>
                                     </div>
@@ -535,18 +555,18 @@ const Sales: React.FC = () => {
                                     </button>
                                 </div>
 
-                                {/* Mobile Sticky Bottom Bar */}
-                                <div className="fixed bottom-0 left-0 right-0 p-4 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 xl:hidden z-50 flex items-center justify-between gap-4 shadow-[0_-10px_30px_rgba(0,0,0,0.1)] dark:shadow-[0_-10px_30px_rgba(0,0,0,0.5)] transition-colors duration-300">
+                                {/* Mobile Sticky Bottom Bar (Above Bottom Nav) */}
+                                <div className="fixed bottom-[72px] left-0 right-0 p-4 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 xl:hidden z-30 flex items-center justify-between gap-4 shadow-[0_-10px_30px_rgba(0,0,0,0.1)] dark:shadow-[0_-10px_30px_rgba(0,0,0,0.5)] transition-colors duration-300">
                                     <div className="flex flex-col">
                                         <span className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest leading-none">Grand Total</span>
                                         <p className="text-lg font-black text-blue-600 dark:text-blue-500">
-                                            {parseFloat(saleForm.payment_amount || '0').toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {saleForm.payment_currency === 'BASE' ? 'USD' : saleForm.payment_currency}
+                                            {renderPrice(saleForm.payment_amount || '0', '', saleForm.payment_currency === 'BASE' ? 'USD' : saleForm.payment_currency)}
                                         </p>
                                     </div>
                                     <div className="flex flex-col text-right">
                                         <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest italic leading-none">Subtotal</span>
                                         <p className="text-[10px] font-black text-gray-500">
-                                            ${estimatedTotal.toLocaleString(undefined, { minimumFractionDigits: 2 })} USD
+                                            {renderPrice(estimatedTotal, '$', 'USD')}
                                         </p>
                                     </div>
                                     <button
@@ -565,104 +585,125 @@ const Sales: React.FC = () => {
             ) : (
                 /* History Tab Content */
                 <div className="space-y-6 animate-in fade-in duration-500 slide-in-from-bottom-4">
-                    <div className="bg-gray-800/40 border border-gray-700 rounded-2xl overflow-hidden shadow-sm">
-                        <div className="px-6 py-4 border-b border-gray-700 bg-gray-800/20 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                            <div className="relative flex-1 max-w-md">
-                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                    <div className="bg-white dark:bg-gray-900/60 border border-gray-200 dark:border-gray-800 rounded-3xl overflow-hidden shadow-xl shadow-gray-200/20 dark:shadow-none transition-colors duration-300">
+                        <div className="px-6 py-5 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/40 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div className="relative flex-1 max-w-md group">
+                                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
                                 <input
                                     type="text"
                                     placeholder="Search transactions, usernames..."
-                                    className="w-full bg-gray-950/50 border border-gray-700 rounded-lg pl-10 pr-4 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
+                                    className="w-full bg-white dark:bg-gray-950/50 border border-gray-200 dark:border-gray-800 rounded-2xl pl-11 pr-4 py-2.5 text-sm text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm"
                                 />
                             </div>
-                            <div className="flex items-center gap-2 text-gray-400 text-sm">
-                                <Calendar className="w-4 h-4" />
-                                <span>Recent 30 Days</span>
-                                <Filter className="w-4 h-4 ml-2 cursor-pointer hover:text-white" />
+                            <div className="flex items-center gap-4">
+                                <div className="flex items-center gap-2 text-gray-400 dark:text-gray-500 text-xs font-bold uppercase tracking-widest">
+                                    <Calendar className="w-4 h-4" />
+                                    <span>Recent 30 Days</span>
+                                </div>
+                                <div className="h-4 w-[1px] bg-gray-200 dark:bg-gray-800 hidden md:block" />
+                                <button className="p-2 text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-all">
+                                    <Filter className="w-4 h-4" />
+                                </button>
                             </div>
                         </div>
 
                         <div className="hidden md:block overflow-x-auto">
-                            <table className="w-full text-left">
+                            <table className="w-full text-left border-collapse">
                                 <thead>
-                                    <tr className="bg-gray-900/50 text-gray-400 text-xs uppercase tracking-wider font-semibold">
-                                        <th className="px-6 py-4 border-b border-gray-700">Date & Time</th>
-                                        <th className="px-6 py-4 border-b border-gray-700">User / Cashier</th>
-                                        <th className="px-6 py-4 border-b border-gray-700 text-center">Totals</th>
-                                        <th className="px-6 py-4 border-b border-gray-700">Actual Payment</th>
-                                        <th className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">Status</th>
-                                        <th className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 text-right">Receipt</th>
+                                    <tr className="bg-gray-50/50 dark:bg-gray-950/30 text-gray-400 dark:text-gray-500 text-[10px] uppercase tracking-[0.15em] font-black">
+                                        <th className="px-6 py-4">Date & Time</th>
+                                        <th className="px-6 py-4">User / Cashier</th>
+                                        <th className="px-6 py-4 text-center">Totals (USD)</th>
+                                        <th className="px-6 py-4">Actual Payment</th>
+                                        <th className="px-6 py-4">Status</th>
+                                        <th className="px-6 py-4 text-right">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+                                <tbody className="divide-y divide-gray-100 dark:divide-gray-800/50">
                                     {loading ? (
                                         <tr>
-                                            <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
-                                                <div className="flex flex-col items-center gap-2"><Loader2 className="w-8 h-8 animate-spin text-blue-500" /><p>Loading history...</p></div>
+                                            <td colSpan={6} className="px-6 py-16 text-center">
+                                                <div className="flex flex-col items-center gap-3">
+                                                    <Loader2 className="w-10 h-10 animate-spin text-blue-500" />
+                                                    <p className="text-gray-400 font-bold uppercase tracking-widest text-[10px]">Loading history...</p>
+                                                </div>
                                             </td>
                                         </tr>
                                     ) : sales.length === 0 ? (
                                         <tr>
-                                            <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
-                                                <div className="flex flex-col items-center gap-2 opacity-50"><ShoppingBag className="w-12 h-12" /><p>No sales history found.</p></div>
+                                            <td colSpan={6} className="px-6 py-16 text-center">
+                                                <div className="flex flex-col items-center gap-4 opacity-40">
+                                                    <div className="p-4 bg-gray-100 dark:bg-gray-800 rounded-full">
+                                                        <ShoppingBag className="w-10 h-10 text-gray-400" />
+                                                    </div>
+                                                    <p className="text-gray-500 font-bold uppercase tracking-widest text-xs">No sales history found</p>
+                                                </div>
                                             </td>
                                         </tr>
                                     ) : (
                                         sales.map((sale) => (
-                                            <tr key={sale.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/20 transition-colors group">
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900 dark:text-white">
-                                                    {sale.created_at ? new Date(sale.created_at).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }) : 'N/A'}
+                                            <tr key={sale.id} className="hover:bg-blue-50/30 dark:hover:bg-blue-500/5 transition-all group">
+                                                <td className="px-6 py-5 whitespace-nowrap">
+                                                    <p className="text-sm font-bold text-gray-900 dark:text-white">
+                                                        {sale.created_at ? new Date(sale.created_at).toLocaleString([], { dateStyle: 'medium' }) : 'N/A'}
+                                                    </p>
+                                                    <p className="text-[10px] font-medium text-gray-400 dark:text-gray-500 mt-0.5">
+                                                        {sale.created_at ? new Date(sale.created_at).toLocaleString([], { timeStyle: 'short' }) : ''}
+                                                    </p>
                                                 </td>
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    <div className="flex items-center gap-2">
-                                                        <div className="w-7 h-7 rounded-full bg-blue-500/10 dark:bg-blue-500/20 flex items-center justify-center">
-                                                            <User className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                                                <td className="px-6 py-5 whitespace-nowrap">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="w-9 h-9 rounded-xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center border border-gray-200 dark:border-gray-700 shadow-sm transition-all group-hover:scale-105">
+                                                            <User className="w-5 h-5 text-gray-500 dark:text-gray-400" />
                                                         </div>
-                                                        <span className="text-sm font-bold text-gray-700 dark:text-gray-300">{sale.username || 'System Admin'}</span>
+                                                        <div>
+                                                            <p className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-tight">{sale.username || 'System Admin'}</p>
+                                                            <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Cashier</p>
+                                                        </div>
                                                     </div>
                                                 </td>
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    <div className="flex flex-col items-center border-r border-gray-100 dark:border-gray-800 pr-4">
+                                                <td className="px-6 py-5 whitespace-nowrap">
+                                                    <div className="flex flex-col items-center">
                                                         <div className="flex items-center gap-1.5">
-                                                            <span className="text-sm font-black text-gray-900 dark:text-white">${parseFloat(sale.total_amount).toLocaleString()}</span>
-                                                            <span className="text-[10px] text-gray-400 dark:text-gray-500 font-bold">USD</span>
+                                                            <span className="text-sm font-black text-gray-900 dark:text-white tracking-widest">{renderPrice(sale.total_amount, '$')}</span>
                                                         </div>
-                                                        {sale.currency_code !== 'BASE' && (
-                                                            <div className="flex items-center gap-1.5 mt-0.5 opacity-60">
-                                                                <span className="text-[10px] font-bold text-gray-400">
-                                                                    {(parseFloat(sale.total_amount) * parseFloat(sale.exchange_rate || '1')).toLocaleString()} {sale.currency_code}
-                                                                </span>
-                                                            </div>
+                                                        {sale.currency_code !== 'BASE' && sale.currency_code !== 'USD' && (
+                                                            <p className="text-[10px] font-bold text-blue-500/60 dark:text-blue-400/50 mt-1">
+                                                                {renderPrice(parseFloat(sale.total_amount) * parseFloat(sale.exchange_rate || '1'), '', sale.currency_code)}
+                                                            </p>
                                                         )}
                                                     </div>
                                                 </td>
-                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                <td className="px-6 py-5 whitespace-nowrap">
                                                     {sale.payment_amount ? (
-                                                        <div className="flex flex-col">
+                                                        <div className="flex flex-col gap-1.5">
                                                             <div className="flex items-center gap-2">
-                                                                <Banknote className="w-3 h-3 text-green-500" />
-                                                                <span className="text-sm font-black text-green-400">
-                                                                    {parseFloat(sale.payment_amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {sale.payment_currency === 'BASE' ? 'USD' : sale.payment_currency}
+                                                                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                                                                <span className="text-sm font-black text-emerald-600 dark:text-emerald-400">
+                                                                    {renderPrice(sale.payment_amount, '', sale.payment_currency === 'BASE' ? 'USD' : sale.payment_currency)}
                                                                 </span>
                                                             </div>
-                                                            <span className="text-[10px] text-gray-500 font-bold uppercase tracking-tighter mt-1">{sale.payment_method?.replace('_', ' ')}</span>
+                                                            <span className="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest pl-3.5">
+                                                                {sale.payment_method?.replace('_', ' ')}
+                                                            </span>
                                                         </div>
                                                     ) : (
-                                                        <span className="text-xs text-gray-600 italic">No record</span>
+                                                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">No record</span>
                                                     )}
                                                 </td>
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border ${getStatusStyle(sale.status || 'PENDING')}`}>
+                                                <td className="px-6 py-5 whitespace-nowrap">
+                                                    <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${getStatusStyle(sale.status || 'PENDING')}`}>
                                                         {getStatusIcon(sale.status || 'PENDING')}
                                                         {sale.status || 'PENDING'}
                                                     </span>
                                                 </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-right">
+                                                <td className="px-6 py-5 whitespace-nowrap text-right">
                                                     <button
                                                         onClick={() => handleViewReceipt(sale.id)}
-                                                        className="p-2 text-blue-600 dark:text-blue-400 border border-transparent hover:border-blue-200 dark:hover:border-blue-500/20 hover:bg-blue-500/5 dark:hover:bg-blue-600/10 rounded-lg transition-all"
+                                                        className="p-2.5 text-blue-600 dark:text-blue-400 bg-blue-500/5 dark:bg-blue-500/10 hover:bg-blue-500/10 dark:hover:bg-blue-500/20 border border-blue-500/10 rounded-xl transition-all active:scale-95 shadow-sm"
+                                                        title="View Digital Receipt"
                                                     >
-                                                        <TablePropertiesIcon className="w-4 h-4" />
+                                                        <TablePropertiesIcon className="w-5 h-5" />
                                                     </button>
                                                 </td>
                                             </tr>
@@ -673,56 +714,58 @@ const Sales: React.FC = () => {
                         </div>
 
                         {/* Mobile History Cards */}
-                        <div className="md:hidden divide-y divide-gray-800">
+                        <div className="md:hidden divide-y divide-gray-100 dark:divide-gray-800/50">
                             {loading ? (
-                                <div className="p-12 text-center text-gray-500">
-                                    <Loader2 className="w-8 h-8 animate-spin mx-auto text-blue-500 mb-2" />
-                                    Loading history...
+                                <div className="p-20 text-center">
+                                    <Loader2 className="w-10 h-10 animate-spin text-blue-500 mx-auto mb-3" />
+                                    <p className="text-gray-400 font-bold uppercase tracking-widest text-[10px]">Loading history...</p>
                                 </div>
                             ) : sales.length === 0 ? (
-                                <div className="p-12 text-center text-gray-500 opacity-50">
-                                    <ShoppingBag className="w-12 h-12 mx-auto mb-2" />
-                                    No sales history.
+                                <div className="p-20 text-center">
+                                    <ShoppingBag className="w-12 h-12 text-gray-400 mx-auto mb-4 opacity-40" />
+                                    <p className="text-gray-500 font-bold uppercase tracking-widest text-xs">No sales history found</p>
                                 </div>
                             ) : (
                                 sales.map((sale) => (
-                                    <div key={sale.id} className="p-4 bg-white dark:bg-gray-900/40 space-y-4 transition-colors duration-300">
+                                    <div key={sale.id} className="p-5 bg-white dark:bg-gray-950/20 space-y-5 group transition-all duration-300">
                                         <div className="flex justify-between items-start">
-                                            <div>
-                                                <p className="text-[10px] text-gray-400 dark:text-gray-500 font-bold uppercase tracking-widest mb-1">
-                                                    {sale.created_at ? new Date(sale.created_at).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }) : 'N/A'}
-                                                </p>
-                                                <div className="flex items-center gap-2">
-                                                    <div className="w-5 h-5 rounded-full bg-blue-500/10 flex items-center justify-center">
-                                                        <User className="w-3 h-3 text-blue-600 dark:text-blue-400" />
-                                                    </div>
-                                                    <span className="text-sm font-bold text-gray-700 dark:text-gray-300">{sale.username || 'System Admin'}</span>
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 rounded-2xl bg-gray-50 dark:bg-gray-900 flex items-center justify-center border border-gray-100 dark:border-gray-800 shadow-sm">
+                                                    <User className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-tight leading-none mb-1">
+                                                        {sale.username || 'System Admin'}
+                                                    </p>
+                                                    <p className="text-[10px] text-gray-400 dark:text-gray-500 font-bold uppercase tracking-widest">
+                                                        {sale.created_at ? new Date(sale.created_at).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }) : 'N/A'}
+                                                    </p>
                                                 </div>
                                             </div>
-                                            <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-tighter border ${getStatusStyle(sale.status || 'PENDING')}`}>
+                                            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest border ${getStatusStyle(sale.status || 'PENDING')}`}>
                                                 {sale.status || 'PENDING'}
                                             </span>
                                         </div>
 
-                                        <div className="flex items-center justify-between bg-gray-50 dark:bg-gray-950/60 p-3 rounded-xl border border-gray-100 dark:border-gray-800 transition-colors duration-300">
-                                            <div className="text-center flex-1 border-r border-gray-100 dark:border-gray-800">
-                                                <p className="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1">Grand Total</p>
-                                                <p className="text-sm font-black text-gray-900 dark:text-white">${parseFloat(sale.total_amount).toLocaleString()}</p>
+                                        <div className="grid grid-cols-2 gap-3">
+                                            <div className="bg-gray-50 dark:bg-gray-900/40 p-3.5 rounded-2xl border border-gray-100 dark:border-gray-800/50 transition-colors">
+                                                <p className="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1.5">Grand Total</p>
+                                                <p className="text-base font-black text-gray-900 dark:text-white tracking-widest">{renderPrice(sale.total_amount, '$')}</p>
                                             </div>
-                                            <div className="text-center flex-1">
-                                                <p className="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1">Actually Paid</p>
-                                                <p className="text-sm font-black text-green-600 dark:text-green-400">
-                                                    {parseFloat(sale.payment_amount || '0').toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {sale.payment_currency === 'BASE' ? 'USD' : sale.payment_currency}
+                                            <div className="bg-emerald-500/5 dark:bg-emerald-500/10 p-3.5 rounded-2xl border border-emerald-500/10 transition-colors text-right">
+                                                <p className="text-[9px] font-black text-emerald-600 dark:text-emerald-500 uppercase tracking-widest mb-1.5 text-right">Payment Received</p>
+                                                <p className="text-base font-black text-emerald-600 dark:text-emerald-400 tracking-widest">
+                                                    {renderPrice(sale.payment_amount || '0', '', sale.payment_currency === 'BASE' ? 'USD' : sale.payment_currency)}
                                                 </p>
                                             </div>
                                         </div>
 
                                         <button
                                             onClick={() => handleViewReceipt(sale.id)}
-                                            className="w-full py-2.5 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-blue-600 dark:text-blue-400 font-black text-[10px] uppercase tracking-widest rounded-lg flex items-center justify-center gap-2 border border-gray-100 dark:border-gray-700 transition-all"
+                                            className="w-full py-4 bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 text-blue-600 dark:text-blue-400 font-black text-[10px] uppercase tracking-[0.2em] rounded-2xl flex items-center justify-center gap-3 border border-gray-100 dark:border-gray-800 shadow-sm active:scale-[0.98] transition-all"
                                         >
-                                            <ClipboardListIcon className="w-3.5 h-3.5" />
-                                            View Full Receipt
+                                            <ClipboardListIcon className="w-4 h-4" />
+                                            View Digital Receipt
                                         </button>
                                     </div>
                                 ))
@@ -785,7 +828,7 @@ const Sales: React.FC = () => {
                                                         <p className="text-[10px] text-gray-400 dark:text-gray-500 font-mono">{item.product_code}</p>
                                                     </div>
                                                     <div className="text-center text-sm font-black text-gray-400">×{item.quantity}</div>
-                                                    <div className="text-right text-sm font-black text-gray-900 dark:text-white">${parseFloat(item.subtotal).toLocaleString()}</div>
+                                                    <div className="text-right text-sm font-black text-gray-900 dark:text-white">{renderPrice(item.subtotal, '$')}</div>
                                                 </div>
                                             ))}
                                         </div>
@@ -796,12 +839,12 @@ const Sales: React.FC = () => {
                                         <div className="space-y-2">
                                             <div className="flex justify-between items-center text-gray-500 dark:text-gray-400">
                                                 <span className="text-xs font-bold uppercase tracking-wider">Total Price (USD)</span>
-                                                <span className="text-sm font-black text-gray-900 dark:text-white">${parseFloat(selectedSale.sale.total_amount).toLocaleString()}</span>
+                                                <span className="text-sm font-black text-gray-900 dark:text-white">{renderPrice(selectedSale.sale.total_amount, '$')}</span>
                                             </div>
                                             {selectedSale.sale.currency_code !== 'BASE' && (
                                                 <div className="flex justify-between items-center text-[10px] text-gray-400 dark:text-gray-600 font-bold uppercase tracking-widest leading-none">
                                                     <span>Subtotal ({selectedSale.sale.currency_code})</span>
-                                                    <span>{(parseFloat(selectedSale.sale.total_amount) * parseFloat(selectedSale.sale.exchange_rate || '1')).toLocaleString()} {selectedSale.sale.currency_code}</span>
+                                                    <span>{renderPrice(parseFloat(selectedSale.sale.total_amount) * parseFloat(selectedSale.sale.exchange_rate || '1'), '', selectedSale.sale.currency_code)}</span>
                                                 </div>
                                             )}
                                         </div>
@@ -814,7 +857,7 @@ const Sales: React.FC = () => {
                                             <div className="flex justify-between items-center pt-1">
                                                 <span className="text-sm text-gray-500 dark:text-gray-400 font-bold">Paid in {selectedSale.sale.payment_currency === 'BASE' ? 'USD' : selectedSale.sale.payment_currency}</span>
                                                 <span className="text-2xl font-black text-green-600 dark:text-green-400">
-                                                    {parseFloat(selectedSale.sale.payment_amount || '0').toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {selectedSale.sale.payment_currency === 'BASE' ? 'USD' : selectedSale.sale.payment_currency}
+                                                    {renderPrice(selectedSale.sale.payment_amount, '', selectedSale.sale.payment_currency === 'BASE' ? 'USD' : selectedSale.sale.payment_currency)}
                                                 </span>
                                             </div>
                                         </div>
@@ -828,7 +871,7 @@ const Sales: React.FC = () => {
                                                 </div>
                                             </div>
                                             <span className="text-lg font-black text-blue-600 dark:text-blue-500">
-                                                {parseFloat(selectedSale.sale.payment_amount || '0').toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {selectedSale.sale.payment_currency === 'BASE' ? 'USD' : selectedSale.sale.payment_currency}
+                                                {renderPrice(selectedSale.sale.payment_amount, '', selectedSale.sale.payment_currency === 'BASE' ? 'USD' : selectedSale.sale.payment_currency)}
                                             </span>
                                         </div>
                                     </div>
