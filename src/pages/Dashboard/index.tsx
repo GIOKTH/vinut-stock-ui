@@ -129,6 +129,27 @@ export default function Dashboard() {
                 </div>
             </div>
 
+            {/* Currency Board Section */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm transition-colors duration-300">
+                <div className="px-4 sm:px-6 py-4 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/10 flex items-center gap-2">
+                    <TrendingUp className="w-4 h-4 text-emerald-500" />
+                    <h3 className="text-[10px] font-black text-gray-900 dark:text-white uppercase tracking-[0.25em]">Current Currency Board</h3>
+                </div>
+                <div className="p-4 sm:p-6">
+                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                        {summary.exchange_rates?.map((rate) => (
+                            <div key={rate.currency} className="p-4 bg-gray-50 dark:bg-gray-950/40 rounded-2xl border border-gray-100 dark:border-gray-800 flex flex-col items-center justify-center space-y-1 hover:border-blue-500/30 transition-all hover:scale-[1.05] group">
+                                <span className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">{rate.currency}</span>
+                                <span className="text-lg font-black text-gray-900 dark:text-white tracking-tight group-hover:text-blue-500 transition-colors">
+                                    {Number(rate.rate).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 4 })}
+                                </span>
+                                <div className="text-[9px] text-gray-400 dark:text-gray-600 font-medium">TO BASE (USD)</div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
             {/* Charts Section */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                 {/* Top 5 Best Sellers Chart */}

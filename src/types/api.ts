@@ -233,6 +233,10 @@ export interface DashboardSummary {
         quantity: number;
         threshold: number;
     }[];
+    exchange_rates: {
+        currency: string;
+        rate: string;
+    }[];
 }
 
 export interface ProductPerformanceReport {
