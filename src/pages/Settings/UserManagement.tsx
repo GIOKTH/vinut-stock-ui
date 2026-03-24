@@ -39,9 +39,10 @@ export default function UserManagement({ showNotification }: UserManagementProps
                 showNotification('warning', `User ${user.username} has been blocked.`);
             }
             await fetchUsers();
-        } catch (err) {
+        } catch (err: any) {
             console.error('Failed to toggle user block status', err);
-            showNotification('error', 'Failed to update user status.');
+            const errorMsg = err.response?.data?.error || 'Failed to update user status.';
+            showNotification('error', errorMsg);
         } finally {
             setActionLoading(null);
         }
@@ -54,9 +55,10 @@ export default function UserManagement({ showNotification }: UserManagementProps
             await settingsService.changeUserRole(user.id, { role: newRole });
             showNotification('success', `User ${user.username} role updated to ${newRole}.`);
             await fetchUsers();
-        } catch (err) {
+        } catch (err: any) {
             console.error('Failed to change user role', err);
-            showNotification('error', 'Failed to update user role.');
+            const errorMsg = err.response?.data?.error || 'Failed to update user role.';
+            showNotification('error', errorMsg);
         } finally {
             setActionLoading(null);
         }
@@ -70,9 +72,10 @@ export default function UserManagement({ showNotification }: UserManagementProps
             await settingsService.deleteUser(user.id);
             showNotification('success', `User ${user.username} has been deleted.`);
             setUsers(users.filter(u => u.id !== user.id));
-        } catch (err) {
+        } catch (err: any) {
             console.error('Failed to delete user', err);
-            showNotification('error', 'Failed to delete user.');
+            const errorMsg = err.response?.data?.error || 'Failed to delete user.';
+            showNotification('error', errorMsg);
         } finally {
             setActionLoading(null);
         }

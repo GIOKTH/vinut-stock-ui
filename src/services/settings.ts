@@ -12,8 +12,8 @@ export const settingsService = {
     },
 
     getUsers: async (): Promise<UserResponse[]> => {
-        const response = await api.get<{ users: UserResponse[] }>('/settings/users');
-        return response.data.users;
+        const response = await api.get<UserResponse[]>('/settings/users');
+        return response.data;
     },
 
     deleteUser: async (id: string): Promise<void> => {
