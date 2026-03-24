@@ -29,10 +29,10 @@ import { settingsService } from '../../services/settings';
 import { Sale, Product, ExchangeRate, SaleDetailResponse } from '../../types/api';
 
 const renderPrice = (amount: number | string | null | undefined, symbol: string = '', currency: string | null | undefined = '') => {
-    const formatted = typeof amount === 'number' 
+    const formatted = typeof amount === 'number'
         ? amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
         : parseFloat(amount || '0').toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    
+
     const [int, dec] = formatted.split('.');
     return (
         <span className="inline-flex items-baseline">
@@ -122,7 +122,7 @@ const Sales: React.FC = () => {
         const rateObj = currencies.find(c => c.currency_code === saleForm.payment_currency);
         const rate = rateObj ? parseFloat(rateObj.rate_to_base) : 1;
         const converted = estimatedTotal * rate;
-        
+
         setSaleForm(prev => ({
             ...prev,
             payment_amount: converted.toFixed(2),
@@ -136,7 +136,7 @@ const Sales: React.FC = () => {
             // Tab switching
             if (e.altKey && e.key === '1') setActiveTab('POS');
             if (e.altKey && e.key === '2') setActiveTab('HISTORY');
-            
+
             // POS Actions (Only if POS tab is active)
             if (activeTab === 'POS') {
                 // Alt + N: New Item / Add Entry
@@ -254,7 +254,7 @@ const Sales: React.FC = () => {
         if (product) {
             const existingItemIndex = saleForm.items.findIndex(item => item.product_id === product.id);
             const currentQty = existingItemIndex > -1 ? saleForm.items[existingItemIndex].quantity : 0;
-            
+
             if (product.quantity <= 0) {
                 showNotification('error', `Product "${product.name}" is out of stock!`);
                 setScanInput('');
@@ -312,7 +312,7 @@ const Sales: React.FC = () => {
 
     const updateSaleItem = (index: number, field: string, value: any) => {
         const product = products.find(p => p.id === (field === 'product_id' ? value : saleForm.items[index].product_id));
-        
+
         if (field === 'product_id' && value && product) {
             if (product.quantity <= 0) {
                 showNotification('error', `Cannot add "${product.name}" - Out of stock!`);
@@ -330,7 +330,7 @@ const Sales: React.FC = () => {
         const newItems = [...saleForm.items];
         newItems[index] = { ...newItems[index], [field]: value };
         setSaleForm({ ...saleForm, items: newItems });
-        
+
         // If selecting a product manually, focus back to scanner for next item
         if (field === 'product_id' && value) {
             setTimeout(() => scannerInputRef.current?.focus(), 100);
@@ -448,9 +448,9 @@ const Sales: React.FC = () => {
                                             >
                                                 <option value="" className="bg-white dark:bg-gray-900 text-gray-400">Select product...</option>
                                                 {products.map(p => (
-                                                    <option 
-                                                        key={p.id} 
-                                                        value={p.id} 
+                                                    <option
+                                                        key={p.id}
+                                                        value={p.id}
                                                         className={`bg-white dark:bg-gray-900 ${p.quantity <= 0 ? 'text-gray-400 opacity-50' : ''}`}
                                                         disabled={p.quantity <= 0}
                                                     >
@@ -533,7 +533,7 @@ const Sales: React.FC = () => {
                                     <div>
                                         <label className="block text-xs font-bold text-gray-400 dark:text-gray-500 uppercase mb-2 tracking-widest leading-none">Payment Method</label>
                                         <div className="grid grid-cols-2 gap-2">
-                                            {['CASH', 'BANK_TRANSFER', 'QR_PAY'].map(method => (
+                                            {['CASH', 'QR_PAY'].map(method => (
                                                 <button
                                                     key={method}
                                                     type="button"

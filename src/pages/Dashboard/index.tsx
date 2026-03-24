@@ -145,17 +145,29 @@ export default function Dashboard() {
                 </div>
 
                 <div className="p-6">
-                    {/* Responsive Grid: 2 cols on Mobile, 4 on Tablet (MD), 6 on Desktop (LG) */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                        {summary.exchange_rates?.map((rate) => (
-                            <div
-                                key={rate.currency}
-                                className="relative group overflow-hidden p-5 bg-white dark:bg-gray-900/40 rounded-3xl border border-gray-100 dark:border-gray-800 transition-all duration-300 hover:border-blue-500/40 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/5"
-                            >
-                                {/* Decorative Gradient Overlay */}
-                                <div className="absolute -top-12 -right-12 w-24 h-24 bg-blue-500/5 dark:bg-blue-500/10 rounded-full blur-2xl group-hover:bg-blue-500/20 transition-all duration-500"></div>
+                    {/* Centered Flex Layout for Currency Tiles */}
+                    <div className="flex flex-wrap justify-center gap-4">
+                        {summary.exchange_rates?.map((rate) => {
+                            const colors: Record<string, string> = {
+                                LAK: 'purple',
+                                THB: 'emerald',
+                                CNY: 'red',
+                                AUD: 'amber',
+                                EUR: 'indigo',
+                                JPY: 'rose',
+                                KRW: 'cyan',
+                            };
+                            const color = colors[rate.currency] || 'blue';
+                            
+                            return (
+                                <div
+                                    key={rate.currency}
+                                    className={`relative group overflow-hidden p-5 min-w-[180px] bg-${color}-50/30 dark:bg-${color}-500/5 rounded-3xl border border-${color}-100 dark:border-${color}-500/10 transition-all duration-300 hover:border-${color}-400/50 hover:-translate-y-1 hover:shadow-xl hover:shadow-${color}-500/10`}
+                                >
+                                    {/* Decorative Gradient Overlay */}
+                                    <div className={`absolute -top-12 -right-12 w-24 h-24 bg-${color}-500/5 dark:bg-${color}-500/10 rounded-full blur-2xl group-hover:bg-${color}-500/20 transition-all duration-500`}></div>
 
-                                <div className="relative flex flex-col items-center justify-center space-y-4">
+                                    <div className="relative flex flex-col items-center justify-center space-y-4">
                                     <div className="flex items-center gap-3">
                                         <div className="w-12 h-12 bg-blue-500/10 dark:bg-blue-600/20 rounded-full flex items-center justify-center text-xs font-black text-blue-600 dark:text-blue-400 border border-blue-500/20 dark:border-blue-500/30 shadow-sm uppercase shrink-0">
                                             USD
@@ -178,7 +190,8 @@ export default function Dashboard() {
                                     </div>
                                 </div>
                             </div>
-                        ))}
+                        );
+                    })}
                     </div>
                 </div>
             </div>
@@ -195,6 +208,7 @@ export default function Dashboard() {
                                 <XAxis dataKey="name" stroke={isDark ? "#9CA3AF" : "#6B7280"} fontSize={10} tickLine={false} axisLine={false} />
                                 <YAxis stroke={isDark ? "#9CA3AF" : "#6B7280"} fontSize={10} tickLine={false} axisLine={false} />
                                 <Tooltip
+                                    cursor={false}
                                     contentStyle={{
                                         backgroundColor: isDark ? '#1F2937' : '#FFFFFF',
                                         borderColor: isDark ? '#374151' : '#E5E7EB',
