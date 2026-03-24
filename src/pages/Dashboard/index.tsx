@@ -5,7 +5,7 @@ import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
     PieChart, Pie, Cell
 } from 'recharts';
-import { AlertTriangle, TrendingUp, DollarSign, Package } from 'lucide-react';
+import { AlertTriangle, TrendingUp, DollarSign, Package, ArrowRight } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
@@ -129,21 +129,54 @@ export default function Dashboard() {
                 </div>
             </div>
 
-            {/* Currency Board Section */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm transition-colors duration-300">
-                <div className="px-4 sm:px-6 py-4 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/10 flex items-center gap-2">
-                    <TrendingUp className="w-4 h-4 text-emerald-500" />
-                    <h3 className="text-[10px] font-black text-gray-900 dark:text-white uppercase tracking-[0.25em]">Current Currency Board</h3>
+            {/* Modern Currency Board Section */}
+            <div className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-xl rounded-3xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden shadow-2xl transition-all duration-500 hover:shadow-blue-500/10">
+                <div className="px-6 py-5 border-b border-gray-100 dark:border-gray-700/50 bg-gradient-to-r from-blue-500/5 to-purple-500/5 dark:from-blue-500/10 dark:to-purple-500/10 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className="p-2 bg-blue-500/10 rounded-xl">
+                            <DollarSign className="w-5 h-5 text-blue-500" />
+                        </div>
+                        <h3 className="text-sm font-black text-gray-900 dark:text-white uppercase tracking-[0.3em]">Live Currency Board</h3>
+                    </div>
+                    <div className="px-3 py-1 bg-green-500/10 rounded-full border border-green-500/20 flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]"></span>
+                        <span className="text-[10px] font-black text-green-600 dark:text-green-400 uppercase tracking-widest">Active</span>
+                    </div>
                 </div>
-                <div className="p-4 sm:p-6">
-                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+
+                <div className="p-6">
+                    {/* Responsive Grid: 2 cols on Mobile, 4 on Tablet (MD), 6 on Desktop (LG) */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
                         {summary.exchange_rates?.map((rate) => (
-                            <div key={rate.currency} className="p-4 bg-gray-50 dark:bg-gray-950/40 rounded-2xl border border-gray-100 dark:border-gray-800 flex flex-col items-center justify-center space-y-1 hover:border-blue-500/30 transition-all hover:scale-[1.05] group">
-                                <span className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">{rate.currency}</span>
-                                <span className="text-lg font-black text-gray-900 dark:text-white tracking-tight group-hover:text-blue-500 transition-colors">
-                                    {Number(rate.rate).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 4 })}
-                                </span>
-                                <div className="text-[9px] text-gray-400 dark:text-gray-600 font-medium">TO BASE (USD)</div>
+                            <div
+                                key={rate.currency}
+                                className="relative group overflow-hidden p-5 bg-white dark:bg-gray-900/40 rounded-3xl border border-gray-100 dark:border-gray-800 transition-all duration-300 hover:border-blue-500/40 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/5"
+                            >
+                                {/* Decorative Gradient Overlay */}
+                                <div className="absolute -top-12 -right-12 w-24 h-24 bg-blue-500/5 dark:bg-blue-500/10 rounded-full blur-2xl group-hover:bg-blue-500/20 transition-all duration-500"></div>
+
+                                <div className="relative flex flex-col items-center justify-center space-y-4">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-12 h-12 bg-blue-500/10 dark:bg-blue-600/20 rounded-full flex items-center justify-center text-xs font-black text-blue-600 dark:text-blue-400 border border-blue-500/20 dark:border-blue-500/30 shadow-sm uppercase shrink-0">
+                                            USD
+                                        </div>
+                                        <ArrowRight className="w-4 h-4 text-gray-400" />
+                                        <div className="w-12 h-12 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center text-xs font-black text-gray-900 dark:text-white border border-gray-200/50 dark:border-gray-700 shadow-sm uppercase shrink-0">
+                                            {rate.currency}
+                                        </div>
+                                    </div>
+
+                                    <div className="text-center group-hover:scale-110 transition-transform duration-300">
+                                        <div className="text-2xl font-black text-gray-900 dark:text-white tracking-tighter tabular-nums drop-shadow-sm group-hover:text-blue-500 transition-colors">
+                                            {Number(rate.rate).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 4 })}
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center gap-1.5 px-3 py-1 bg-gray-50 dark:bg-gray-800/80 rounded-full border border-gray-100 dark:border-gray-700/50">
+                                        <TrendingUp className="w-3 h-3 text-emerald-500" />
+                                        <span className="text-[9px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest whitespace-nowrap">Live Rate</span>
+                                    </div>
+                                </div>
                             </div>
                         ))}
                     </div>
@@ -162,9 +195,9 @@ export default function Dashboard() {
                                 <XAxis dataKey="name" stroke={isDark ? "#9CA3AF" : "#6B7280"} fontSize={10} tickLine={false} axisLine={false} />
                                 <YAxis stroke={isDark ? "#9CA3AF" : "#6B7280"} fontSize={10} tickLine={false} axisLine={false} />
                                 <Tooltip
-                                    contentStyle={{ 
-                                        backgroundColor: isDark ? '#1F2937' : '#FFFFFF', 
-                                        borderColor: isDark ? '#374151' : '#E5E7EB', 
+                                    contentStyle={{
+                                        backgroundColor: isDark ? '#1F2937' : '#FFFFFF',
+                                        borderColor: isDark ? '#374151' : '#E5E7EB',
                                         color: isDark ? '#FFFFFF' : '#111827',
                                         borderRadius: '12px',
                                         borderWidth: '1px',
@@ -199,9 +232,9 @@ export default function Dashboard() {
                                     ))}
                                 </Pie>
                                 <Tooltip
-                                    contentStyle={{ 
-                                        backgroundColor: isDark ? '#1F2937' : '#FFFFFF', 
-                                        borderColor: isDark ? '#374151' : '#E5E7EB', 
+                                    contentStyle={{
+                                        backgroundColor: isDark ? '#1F2937' : '#FFFFFF',
+                                        borderColor: isDark ? '#374151' : '#E5E7EB',
                                         color: isDark ? '#FFFFFF' : '#111827',
                                         borderRadius: '12px',
                                         borderWidth: '1px'

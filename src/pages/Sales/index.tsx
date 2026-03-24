@@ -20,7 +20,8 @@ import {
     Printer,
     Download,
     Barcode,
-    TableProperties as TablePropertiesIcon
+    TableProperties as TablePropertiesIcon,
+    TrendingUp
 } from 'lucide-react';
 import { saleService } from '../../services/sales';
 import { productService } from '../../services/products';
@@ -115,7 +116,21 @@ const Sales: React.FC = () => {
 
     useEffect(() => {
         fetchData();
+    }, []);
 
+    useEffect(() => {
+        const rateObj = currencies.find(c => c.currency_code === saleForm.payment_currency);
+        const rate = rateObj ? parseFloat(rateObj.rate_to_base) : 1;
+        const converted = estimatedTotal * rate;
+        
+        setSaleForm(prev => ({
+            ...prev,
+            payment_amount: converted.toFixed(2),
+            currency_code: saleForm.payment_currency === 'USD' ? 'BASE' : saleForm.payment_currency
+        }));
+    }, [estimatedTotal, saleForm.payment_currency, currencies]);
+
+    useEffect(() => {
         // Keyboard Shortcuts
         const handleKeyPress = (e: KeyboardEvent) => {
             // Tab switching
@@ -539,16 +554,21 @@ const Sales: React.FC = () => {
 
                                 </div>
 
-                                <div className="hidden xl:block pt-6 border-t border-gray-100 dark:border-gray-700 space-y-3 transition-colors duration-300">
+                                <div className="hidden xl:block pt-6 border-t border-gray-100 dark:border-gray-700 space-y-4 transition-all duration-300">
                                     <div className="flex justify-between items-center text-gray-500 dark:text-gray-400 font-bold uppercase tracking-widest text-[10px]">
                                         <span className="text-sm font-medium">Total Price (USD)</span>
                                         <p className="text-sm font-black text-gray-900 dark:text-white">{renderPrice(estimatedTotal, '$')}</p>
                                     </div>
 
-                                    {saleForm.currency_code !== 'BASE' && (
-                                        <div className="flex justify-between items-center text-xs text-gray-500 font-bold uppercase tracking-wider">
-                                            <span>Exchange Rate</span>
-                                            <span>1 USD = {currencies.find(c => c.currency_code === saleForm.currency_code)?.rate_to_base || '0'} {saleForm.currency_code}</span>
+                                    {saleForm.payment_currency !== 'USD' && (
+                                        <div className="flex justify-between items-center text-[10px] text-blue-500 font-black uppercase tracking-[0.1em] bg-blue-500/5 p-3 rounded-xl border border-blue-500/10">
+                                            <div className="flex items-center gap-2">
+                                                <TrendingUp className="w-3 h-3" />
+                                                <span>Live Exchange Rate</span>
+                                            </div>
+                                            <span className="text-blue-600 dark:text-blue-400 uppercase">
+                                                1 USD = {currencies.find(c => c.currency_code === saleForm.payment_currency)?.rate_to_base || '1.00'} {saleForm.payment_currency}
+                                            </span>
                                         </div>
                                     )}
 
