@@ -162,9 +162,13 @@ export default function UserManagement({ showNotification }: UserManagementProps
                                         </button>
                                         <button
                                             onClick={() => handleDeleteUser(user)}
-                                            disabled={actionLoading === user.id}
-                                            className="p-2 bg-red-500/10 border border-red-500/20 text-red-500 hover:bg-red-500/20 rounded-lg transition-all active:scale-95"
-                                            title="Delete User"
+                                            disabled={actionLoading === user.id || !!user.has_sales}
+                                            className={`p-2 border rounded-lg transition-all active:scale-95 ${
+                                                user.has_sales 
+                                                ? 'bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-400 cursor-not-allowed'
+                                                : 'bg-red-500/10 border-red-500/20 text-red-500 hover:bg-red-500/20'
+                                            }`}
+                                            title={user.has_sales ? "Cannot delete user with sales record (Block instead)" : "Delete User"}
                                         >
                                             <Trash2 className="w-4 h-4" />
                                         </button>

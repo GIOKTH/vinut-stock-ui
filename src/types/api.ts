@@ -211,6 +211,7 @@ export interface UserResponse {
     is_blocked?: boolean | null;
     role: string;
     username: string;
+    has_sales?: boolean | null;
 }
 
 export interface DashboardSummary {

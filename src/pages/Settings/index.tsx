@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Users, DollarSign, CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
 import UserManagement from './UserManagement';
 import ExchangeRates from './ExchangeRates';
+import { authService } from '../../services/auth';
+import { UserResponse } from '../../types/api';
 
 type Tab = 'users' | 'exchange';
 
@@ -11,14 +13,24 @@ interface Notification {
     message: string;
 }
 
-const TABS: { id: Tab; label: string; icon: React.ElementType }[] = [
-    { id: 'users', label: 'User Management', icon: Users },
+const TABS: { id: Tab; label: string; icon: React.ElementType; adminOnly?: boolean }[] = [
+    { id: 'users', label: 'User Management', icon: Users, adminOnly: true },
     { id: 'exchange', label: 'Exchange Rates', icon: DollarSign },
 ];
 
 export default function Settings() {
-    const [activeTab, setActiveTab] = useState<Tab>('users');
+    const [user, setUser] = useState<UserResponse | null>(null);
+    const [activeTab, setActiveTab] = useState<Tab>('exchange'); // Default to exchange for safety
     const [notifications, setNotifications] = useState<Notification[]>([]);
+
+    useEffect(() => {
+        authService.me().then(data => {
+            setUser(data);
+            if (data.role === 'ADMIN') {
+                setActiveTab('users');
+            }
+        });
+    }, []);
 
     const showNotification = (type: 'success' | 'error' | 'warning', message: string) => {
         const id = Date.now();
@@ -39,6 +51,9 @@ export default function Settings() {
         error: 'bg-red-500/10 border-red-500/20 text-red-300',
         warning: 'bg-yellow-500/10 border-yellow-500/20 text-yellow-300',
     };
+
+    // Filter tabs based on role
+    const visibleTabs = TABS.filter(tab => !tab.adminOnly || user?.role === 'ADMIN');
 
     return (
         <div className="w-full space-y-6">
@@ -64,7 +79,7 @@ export default function Settings() {
             {/* Tab Bar — scrollable on mobile, full-width on desktop */}
             <div className="relative">
                 <div className="flex gap-1 p-1 bg-gray-100 dark:bg-gray-800/80 rounded-xl border border-gray-200 dark:border-gray-700 overflow-x-auto scrollbar-none">
-                    {TABS.map(tab => {
+                    {visibleTabs.map(tab => {
                         const Icon = tab.icon;
                         const isActive = activeTab === tab.id;
                         return (

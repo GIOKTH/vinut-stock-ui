@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
-import { ExchangeRate } from '../../types/api';
+import { useState, useEffect } from 'react';
+import { ExchangeRate, UserResponse } from '../../types/api';
 import { settingsService } from '../../services/settings';
+import { authService } from '../../services/auth';
 import { Coins, RefreshCw, Save, TrendingUp, AlertCircle } from 'lucide-react';
 
 interface ExchangeRatesProps {
@@ -8,13 +9,19 @@ interface ExchangeRatesProps {
 }
 
 export default function ExchangeRates({ showNotification }: ExchangeRatesProps) {
+    const [user, setUser] = useState<UserResponse | null>(null);
     const [rates, setRates] = useState<ExchangeRate[]>([]);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState<string | null>(null);
     const [editRates, setEditRates] = useState<Record<string, string>>({});
 
+    const isAdmin = user?.role === 'ADMIN';
+
     const fetchRates = async () => {
         try {
+            const userData = await authService.me();
+            setUser(userData);
+            
             const data = await settingsService.getExchangeRates();
             setRates(data);
             const initialEditRates: Record<string, string> = {};
@@ -112,15 +119,18 @@ export default function ExchangeRates({ showNotification }: ExchangeRatesProps) 
                                             step="0.0001"
                                             value={editRates[rate.currency_code] || ''}
                                             onChange={(e) => setEditRates({ ...editRates, [rate.currency_code]: e.target.value })}
-                                            className="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm font-bold text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                                            disabled={!isAdmin}
+                                            className={`w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm font-bold text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${!isAdmin ? 'opacity-50 cursor-not-allowed' : ''}`}
                                         />
-                                        <button 
-                                            onClick={() => handleSaveRate(rate.currency_code)}
-                                            disabled={saving === rate.currency_code}
-                                            className="p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all active:scale-95 disabled:opacity-50"
-                                        >
-                                            <Save className="w-4 h-4" />
-                                        </button>
+                                        {isAdmin && (
+                                            <button 
+                                                onClick={() => handleSaveRate(rate.currency_code)}
+                                                disabled={saving === rate.currency_code}
+                                                className="p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all active:scale-95 disabled:opacity-50"
+                                            >
+                                                <Save className="w-4 h-4" />
+                                            </button>
+                                        )}
                                     </div>
                                 </div>
                                 
