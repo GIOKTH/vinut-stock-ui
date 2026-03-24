@@ -5,7 +5,7 @@ import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
     PieChart, Pie, Cell
 } from 'recharts';
-import { AlertTriangle, TrendingUp, DollarSign, Package, ArrowRight } from 'lucide-react';
+import { AlertTriangle, TrendingUp, DollarSign, Package, ArrowRight, ChevronDown, ChevronUp } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
@@ -14,6 +14,7 @@ export default function Dashboard() {
     const { theme } = useTheme();
     const [summary, setSummary] = useState<DashboardSummary | null>(null);
     const [loading, setLoading] = useState(true);
+    const [isLowStockExpanded, setIsLowStockExpanded] = useState(false);
 
     const isDark = theme === 'dark';
 
@@ -262,13 +263,29 @@ export default function Dashboard() {
             </div>
 
             {/* Low Stock Table */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm transition-colors duration-300">
-                <div className="p-4 sm:p-6 border-b border-gray-100 dark:border-gray-700">
-                    <h3 className="text-lg font-bold text-gray-900 dark:text-white uppercase tracking-widest">Low Stock Alerts</h3>
-                </div>
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left min-w-[600px] sm:min-w-full">
-                        <thead className="bg-gray-50 dark:bg-gray-900/50">
+            <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm transition-all duration-300">
+                <button 
+                    onClick={() => setIsLowStockExpanded(!isLowStockExpanded)}
+                    className="w-full p-4 sm:p-6 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between hover:bg-gray-50/50 dark:hover:bg-gray-900/40 transition-colors group"
+                >
+                    <div className="flex items-center gap-3">
+                        <div className="p-2 bg-red-500/10 rounded-lg">
+                            <AlertTriangle className="w-5 h-5 text-red-500" />
+                        </div>
+                        <div className="flex flex-col items-start">
+                            <h3 className="text-lg font-bold text-gray-900 dark:text-white uppercase tracking-widest">Low Stock Alerts</h3>
+                            <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest leading-none mt-1">
+                                {summary.low_stock_details.length} Items requiring attention
+                            </p>
+                        </div>
+                    </div>
+                    {isLowStockExpanded ? <ChevronUp className="w-5 h-5 text-gray-400 group-hover:text-blue-500 transition-colors" /> : <ChevronDown className="w-5 h-5 text-gray-400 group-hover:text-blue-500 transition-colors" />}
+                </button>
+                
+                {isLowStockExpanded && (
+                    <div className="overflow-x-auto transition-all animate-in fade-in slide-in-from-top-2 duration-300">
+                        <table className="w-full text-left min-w-[600px] sm:min-w-full">
+                            <thead className="bg-gray-50 dark:bg-gray-900/50">
                             <tr>
                                 <th className="px-4 sm:px-6 py-4 text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest italic">Product Name</th>
                                 <th className="px-4 sm:px-6 py-4 text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest italic">Current</th>
@@ -300,6 +317,7 @@ export default function Dashboard() {
                         </tbody>
                     </table>
                 </div>
+                )}
             </div>
         </div>
     );
